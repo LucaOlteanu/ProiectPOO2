@@ -25,7 +25,7 @@ Datele de intrare (utilizator si catalog) sunt citite dintr-un fisier text.
 ##  Arhitectura si concepte OOP implementate
 
 ### Ierarhia de clase
-
+```text
 Produs (clasa abstracta)
 ├── ProdusAlimentar
 ├── ProdusElectronic
@@ -35,7 +35,7 @@ Utilizator
 
 Cos
 └── contine std::vector<std::unique_ptr<Produs>>
-
+```
 
 ### Caracteristici specifice
 
@@ -54,7 +54,7 @@ Cos
 
 ---
 
-## ⚙️ Compilare si rulare
+##  Compilare si rulare
 
 ### Folosind CMake (CLion)
 
@@ -88,7 +88,7 @@ PRODUS_ALIMENTAR: Paine, 2.5, 50, 2025-05-02
 Data expirarii in format YYYY-MM-DD. Programul compara cu data curenta a sistemului.
 
 Scenariu de utilizare (fragment din main.cpp)
-
+```cpp
 // Citire catalog si utilizator din fisier
 // ... parsare ...
 
@@ -108,3 +108,32 @@ try {
 } catch (const SoldInsuficientException& e) {
     std::cerr << "Eroare: " << e.what() << '\n';
 }
+```
+
+Concluzie
+Proiectul demonstreaza toate cerintele temei 2:
+
+```mosteniri cu clase derivate si functii virtuale
+
+constructori virtuali (clone)
+
+interfata non-virtuala pentru afisare
+
+dynamic_cast pentru downcast
+
+copy-and-swap in operator= din Cos
+
+ierarhie proprie de exceptii
+
+atribute si functii statice
+
+smart pointers (unique_ptr)
+
+tratarea exceptiilor in main
+
+citire din fisier si separarea codului in .h/.cpp
+```
+
+GitHub: LucaOlteanu/ProiectPOO2
+
+Orice sugestie sau imbunatatire este binevenita. 😊

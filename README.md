@@ -113,24 +113,25 @@ try {
 Concluzie
 Proiectul demonstreaza toate cerintele temei 2:
 ```text
-mosteniri cu clase derivate si functii virtuale
-constructori virtuali (clone)
+-mosteniri cu clase derivate si functii virtuale
 
-interfata non-virtuala pentru afisare
+-constructori virtuali (clone)
 
-dynamic_cast pentru downcast
+-interfata non-virtuala pentru afisare
 
-copy-and-swap in operator= din Cos
+-dynamic_cast pentru downcast
 
-ierarhie proprie de exceptii
+-copy-and-swap in operator= din Cos
 
-atribute si functii statice
+-ierarhie proprie de exceptii
 
-smart pointers (unique_ptr)
+-atribute si functii statice
 
-tratarea exceptiilor in main
+-smart pointers (unique_ptr)
 
-citire din fisier si separarea codului in .h/.cpp
+-tratarea exceptiilor in main
+
+-citire din fisier si separarea codului in .h/.cpp
 ```
 
 
@@ -141,7 +142,6 @@ ctime - functii pentru manipularea elementelor de timp
 chrono - pentru extragerea timpului din sistem
 infed, define - define guard, are grija sa nu se includa acelasi fisier header de mai multe ori
 noexcept - promisiune ca acea functie nu poate cauza exceptii
-stdexcept - clase standard de exceptii pentru a deriva unele noi pentru programul meu
 ```
 GitHub: LucaOlteanu/ProiectPOO2
 

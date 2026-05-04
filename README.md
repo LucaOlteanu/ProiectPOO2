@@ -112,9 +112,8 @@ try {
 
 Concluzie
 Proiectul demonstreaza toate cerintele temei 2:
-
-```mosteniri cu clase derivate si functii virtuale
-
+```text
+mosteniri cu clase derivate si functii virtuale
 constructori virtuali (clone)
 
 interfata non-virtuala pentru afisare
@@ -134,6 +133,16 @@ tratarea exceptiilor in main
 citire din fisier si separarea codului in .h/.cpp
 ```
 
+
+Bibliografie
+```text
+sstream - pentru parsare de stringuri
+ctime - functii pentru manipularea elementelor de timp
+chrono - pentru extragerea timpului din sistem
+infed, define - define guard, are grija sa nu se includa acelasi fisier header de mai multe ori
+noexcept - promisiune ca acea functie nu poate cauza exceptii
+stdexcept - clase standard de exceptii pentru a deriva unele noi pentru programul meu
+```
 GitHub: LucaOlteanu/ProiectPOO2
 
 Orice sugestie sau imbunatatire este binevenita. 😊

@@ -12,10 +12,10 @@ Produs::Produs(const std::string& nume, double pret, int stoc)
 }
 
 Produs::Produs(const Produs& other)
-    : id(nextId++), nume(other.nume), pretBaza(other.pretBaza), stoc(other.stoc) {}
+    : id(other.id), nume(other.nume), pretBaza(other.pretBaza), stoc(other.stoc) {}
 
 Produs::Produs(Produs&& other) noexcept
-    : id(nextId++), nume(std::move(other.nume)), pretBaza(other.pretBaza), stoc(other.stoc) {
+    : id(other.id), nume(std::move(other.nume)), pretBaza(other.pretBaza), stoc(other.stoc) {
     other.pretBaza = 0;
     other.stoc = 0;
 }
@@ -52,7 +52,7 @@ void Produs::setStoc(int stocNou) {
     stoc = stocNou;
 }
 
-void Produs::actualizeazaStoc(int cantitate) {
+void Produs::actualizeazaStoc(int cantitate) { //setter pentru actualizare stoc
     if (cantitate < 0 && stoc + cantitate < 0)
         throw std::runtime_error("Stoc insuficient");
     stoc += cantitate;

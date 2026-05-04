@@ -13,7 +13,7 @@ ProdusMobilier::ProdusMobilier(const std::string& nume, double pret, int stoc,
 }
 
 
-ProdusMobilier::~ProdusMobilier() {}
+ProdusMobilier::~ProdusMobilier() = default;
 
 double ProdusMobilier::calculeazaPretFinal() const {
     double pret = getPretBaza();

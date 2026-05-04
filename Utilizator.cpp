@@ -1,5 +1,7 @@
 #include "Utilizator.h"
 #include <stdexcept>
+#include <string>
+#include <iostream>
 
 int Utilizator::nextId = 1;
 
@@ -13,17 +15,15 @@ Utilizator::Utilizator(const std::string& nume, const std::string& adresa, doubl
 }
 
 Utilizator::Utilizator(const Utilizator& other)
-    : id(nextId++), nume(other.nume), adresa(other.adresa), sold(other.sold) {}
+    : id(other.id), nume(other.nume), adresa(other.adresa), sold(other.sold) {}
 
 Utilizator::Utilizator(Utilizator&& other) noexcept
-    : id(nextId++), nume(std::move(other.nume)),
-      adresa(std::move(other.adresa)), sold(other.sold) {
+    : id(other.id), nume(std::move(other.nume)), adresa(std::move(other.adresa)), sold(other.sold) {
     other.sold = 0.0;
 }
 
 Utilizator& Utilizator::operator=(const Utilizator& other) {
     if (this != &other) {
-        // id-ul rămâne neschimbat (const)
         nume = other.nume;
         adresa = other.adresa;
         sold = other.sold;
@@ -41,7 +41,7 @@ Utilizator& Utilizator::operator=(Utilizator&& other) noexcept {
     return *this;
 }
 
-Utilizator::~Utilizator() {}
+Utilizator::~Utilizator() = default;
 
 int Utilizator::getId() const { return id; }
 const std::string& Utilizator::getNume() const { return nume; }
@@ -71,9 +71,9 @@ void Utilizator::extrageFonduri(double suma) {
 int Utilizator::getNextId() { return nextId; }
 
 std::ostream& operator<<(std::ostream& os, const Utilizator& u) {
-    os << "Utilizator ID: " << u.id
-       << ", Nume: " << u.nume
-       << ", Adresa: " << u.adresa
-       << ", Sold: " << u.sold << " lei";
+    os << "Utilizator ID: " << u.getId()
+       << ", Nume: " << u.getNume()
+       << ", Adresa: " << u.getAdresa()
+       << ", Sold: " << u.getSold() << " lei";
     return os;
 }

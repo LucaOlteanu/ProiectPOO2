@@ -1,22 +1,24 @@
 #include "Cos.h"
 #include "ProdusAlimentar.h"
 #include "Exceptii.h"
-#include <algorithm>
-#include <iostream>
+#include <utility> //pentru swap si move
 
 Cos::Cos() : proprietar(), total(0.0) {}
 
-Cos::Cos(const Utilizator& prop) : proprietar(prop), total(0.0) {}
+Cos::Cos(Utilizator& prop) : proprietar(&prop), total(0.0) {}
 
 Cos::Cos(const Cos& other)
     : proprietar(other.proprietar), total(other.total) {
-    for (const auto& prod : other.produse) {
-        produse.push_back(std::unique_ptr<Produs>(prod->clone()));
+    for (const auto& item : other.produse) {
+        produse.push_back(ItemComanda{
+            std::unique_ptr<Produs>(item.produs->clone()),
+            item.cantitate
+        });
     }
 }
 
 Cos::Cos(Cos&& other) noexcept
-    : proprietar(std::move(other.proprietar)),
+    : proprietar(other.proprietar),
       produse(std::move(other.produse)),
       total(other.total) {
     other.total = 0.0;
@@ -25,14 +27,14 @@ Cos::Cos(Cos&& other) noexcept
 Cos& Cos::operator=(const Cos& other) {
     if (this != &other) {
         Cos temp(other);
-        swap(temp);
+        swap(*this, temp);
     }
     return *this;
 }
 
 Cos& Cos::operator=(Cos&& other) noexcept {
     if (this != &other) {
-        proprietar = std::move(other.proprietar);
+        proprietar = other.proprietar;
         produse = std::move(other.produse);
         total = other.total;
         other.total = 0.0;
@@ -40,7 +42,7 @@ Cos& Cos::operator=(Cos&& other) noexcept {
     return *this;
 }
 
-Cos::~Cos() {}
+Cos::~Cos() = default;
 
 void swap(Cos& first, Cos& second) noexcept {
     using std::swap;
@@ -51,11 +53,20 @@ void swap(Cos& first, Cos& second) noexcept {
 
 void Cos::adaugaProdus(const Produs& produs, int cantitate) {
     if (cantitate <= 0) {
-        throw std::invalid_argument("Cantitatea trebuie să fie pozitivă");
+        throw std::invalid_argument("Cantitatea trebuie sa fie pozitiva");
     }
-    for (int i = 0; i < cantitate; ++i) {
-        produse.push_back(std::unique_ptr<Produs>(produs.clone()));
+    // verifica daca exista deja
+    for (auto& item : produse) {
+        if (item.produs->getId() == produs.getId()) {
+            item.cantitate += cantitate;
+            total += produs.calculeazaPretFinal() * cantitate;
+            return;
+        }
     }
+    produse.push_back(ItemComanda{
+        std::unique_ptr<Produs>(produs.clone()),
+        cantitate
+    });
     total += produs.calculeazaPretFinal() * cantitate;
 }
 
@@ -63,7 +74,7 @@ void Cos::eliminaProdus(int index) {
     if (index < 0 || index >= static_cast<int>(produse.size())) {
         throw std::out_of_range("Index invalid");
     }
-    total -= produse[index]->calculeazaPretFinal();
+    total -= produse[index].produs->calculeazaPretFinal() * produse[index].cantitate;
     produse.erase(produse.begin() + index);
 }
 
@@ -72,21 +83,17 @@ double Cos::getTotal() const {
 }
 
 void Cos::afisareCos(std::ostream& os) const {
-    os << "=== COȘ DE CUMPĂRĂTURI ===\n";
-    os << proprietar << "\n";
+    os << "=== COS DE CUMPARATURI ===\n";
+    os << *proprietar << "\n";
     if (produse.empty()) {
-        os << "Coșul este gol.\n";
+        os << "Cosul este gol.\n";
     } else {
-        os << "Produse în coș:\n";
+        os << "Produse in cos:\n";
         for (size_t i = 0; i < produse.size(); ++i) {
-            os << i + 1 << ". ";
-            produse[i]->afisare(os);
-            if (auto* alimentar = dynamic_cast<ProdusAlimentar*>(produse[i].get())) {
-                if (alimentar->esteExpirat()) {
-                    os << " (ATENȚIE: EXPIRAT!)";
-                }
-            }
-            os << "\n";
+            const auto& item = produse[i];
+            os << i + 1 << ". " << *item.produs;
+            os << ", Cantitate: " << item.cantitate
+               << ", Subtotal: " << item.produs->calculeazaPretFinal() * item.cantitate << " lei\n";
         }
         os << "Total: " << total << " lei\n";
     }
@@ -94,39 +101,54 @@ void Cos::afisareCos(std::ostream& os) const {
 }
 
 void Cos::finalizeazaComanda(std::vector<std::unique_ptr<Produs>>& catalog) {
+    //verifica daca e gol
     if (produse.empty()) {
-        throw std::runtime_error("Coșul este gol");
+        throw std::runtime_error("Cosul este gol");
     }
 
-    if (proprietar.getSold() < total) {
+    //verifica daca sunt destui bani
+    if (proprietar->getSold() < total) {
         throw SoldInsuficientException("Sold insuficient pentru a finaliza comanda");
     }
 
-    for (const auto& prodCos : produse) {
+    //verifica ca toate produsele sunt disponibile
+    for (const auto& item : produse) {
         bool gasit = false;
-        for (auto& prodCat : catalog) {
-            if (prodCat->getId() == prodCos->getId()) {
-                if (prodCat->getStoc() < 1) {
+        for (const auto& prodCat : catalog) {
+            if (prodCat->getId() == item.produs->getId()) {
+                if (prodCat->getStoc() < item.cantitate) {
                     throw StocInsuficientException("Stoc insuficient pentru produsul " +
                                                     std::string(prodCat->getNume()));
                 }
-                prodCat->actualizeazaStoc(-1);  // scade cu 1
                 gasit = true;
                 break;
             }
         }
         if (!gasit) {
             throw ProdusInexistentException("Produsul cu ID " +
-                                             std::to_string(prodCos->getId()) +
-                                             " nu mai există în catalog");
+                                             std::to_string(item.produs->getId()) +
+                                             " nu mai exista in catalog");
         }
     }
 
-    proprietar.extrageFonduri(total);
+    // actualizare stocuri
+    for (const auto& item : produse) {
+        for (auto& prodCat : catalog) {
+            if (prodCat->getId() == item.produs->getId()) {
+                prodCat->actualizeazaStoc(-item.cantitate);
+                break;
+            }
+        }
+    }
 
+    // scadere bani din contul utilizatorului original
+    proprietar->extrageFonduri(total);
+
+    // golim cosul
     produse.clear();
     total = 0.0;
 }
+
 
 std::ostream& operator<<(std::ostream& os, const Cos& cos) {
     cos.afisareCos(os);

@@ -1,6 +1,7 @@
 #include "ProdusAlimentar.h"
+#include <chrono>
 #include <iomanip>
-#include <stdexcept>
+#include <ctime>
 
 ProdusAlimentar::ProdusAlimentar()
     : Produs(), dataExpirare(std::chrono::system_clock::now() + std::chrono::hours(24 * 30)) {}
@@ -10,7 +11,7 @@ ProdusAlimentar::ProdusAlimentar(const std::string& nume, double pret, int stoc,
     : Produs(nume, pret, stoc), dataExpirare(dataExp) {}
 
 ProdusAlimentar::ProdusAlimentar(const ProdusAlimentar& other)
-    : Produs(other), dataExpirare(other.dataExpirare) {}
+    = default;
 
 ProdusAlimentar::ProdusAlimentar(ProdusAlimentar&& other) noexcept
     : Produs(std::move(other)), dataExpirare(other.dataExpirare) {}
@@ -31,15 +32,15 @@ ProdusAlimentar& ProdusAlimentar::operator=(ProdusAlimentar&& other) noexcept {
     return *this;
 }
 
-ProdusAlimentar::~ProdusAlimentar() {}
+ProdusAlimentar::~ProdusAlimentar() = default;
 
 double ProdusAlimentar::calculeazaPretFinal() const {
     double pret = getPretBaza();
     if (esteExpirat())
         return 0.0;
-    auto now = std::chrono::system_clock::now();
-    auto diff = std::chrono::duration_cast<std::chrono::hours>(dataExpirare - now).count();
-    if (diff < 24)
+    auto now = std::chrono::system_clock::now(); //timpul acum
+    auto diff = std::chrono::duration_cast<std::chrono::hours>(dataExpirare - now).count(); // diferenta intre timpul curent si data expirarii in ore ca sa putem compara cu 24 mai usor
+    if (diff < 24)//daca maia are o zi de valabilitate, produsul este la 50% reducere
         pret *= 0.5;
     return pret;
 }
@@ -58,5 +59,7 @@ void ProdusAlimentar::afisare(std::ostream& os) const {
        << ", ID: " << getId()
        << ", Pret baza: " << getPretBaza()
        << ", Stoc: " << getStoc()
-       << ", Expira la: " << std::chrono::system_clock::to_time_t(dataExpirare);
+       << ", Expira la: ";
+    std::time_t t = std::chrono::system_clock::to_time_t(dataExpirare);
+    os << std::put_time(std::localtime(&t), "%Y-%m-%d");
 }

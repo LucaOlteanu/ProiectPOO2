@@ -1,20 +1,29 @@
 #ifndef COS_H
 #define COS_H
 
+#include <iostream>
 #include <vector>
 #include <memory>
-#include "Produs.h"
 #include "Utilizator.h"
+#include "Produs.h"
 
 class Cos {
 private:
-    Utilizator proprietar;
-    std::vector<std::unique_ptr<Produs>> produse;
+    struct ItemComanda {
+        std::unique_ptr<Produs> produs;
+        int cantitate;
+    };
+
+    Utilizator* proprietar;
+    std::vector<ItemComanda> produse;
     double total;
 
+    friend void swap(Cos& first, Cos& second) noexcept;
+
 public:
+    explicit Cos(Utilizator& prop);
+
     Cos();
-    Cos(const Utilizator& prop);
     Cos(const Cos& other);
     Cos(Cos&& other) noexcept;
     ~Cos();
@@ -26,9 +35,9 @@ public:
     void eliminaProdus(int index);
     double getTotal() const;
     void afisareCos(std::ostream& os) const;
-    void finalizeazaComanda();
+    void finalizeazaComanda(std::vector<std::unique_ptr<Produs>>& catalog);
 
     friend std::ostream& operator<<(std::ostream& os, const Cos& cos);
 };
 
-#endif
+#endif // COS_H

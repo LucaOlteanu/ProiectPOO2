@@ -22,6 +22,7 @@ public:
     Utilizator& operator=(Utilizator&& other) noexcept;
 
     int getId() const;
+    int getNextId();
     const std::string& getNume() const;
     const std::string& getAdresa() const;
     double getSold() const;

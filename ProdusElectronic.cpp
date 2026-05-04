@@ -13,7 +13,7 @@ ProdusElectronic::ProdusElectronic(const std::string& nume, double pret, int sto
         throw std::invalid_argument("Garantia sau puterea nu pot fi negative");
 }
 
-ProdusElectronic::~ProdusElectronic() {}
+ProdusElectronic::~ProdusElectronic() = default;
 
 double ProdusElectronic::calculeazaPretFinal() const {
     double pret = getPretBaza();

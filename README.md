@@ -74,7 +74,7 @@ Cos
 
 Fisierul de intrare (date_intrare.txt)
 Format exemplu:
-
+```text
 USER: Popescu Ion, Strada Principala 10, 500.0
 
 PRODUS_ALIMENTAR: Mere, 4.5, 100, 2025-05-10
@@ -84,7 +84,7 @@ PRODUS_ELECTRONIC: Tastatura mecanica, 350.0, 8, 36, 5.0
 PRODUS_MOBILIER: Birou, 450.0, 5, lemn masiv, 35.0
 PRODUS_MOBILIER: Scaun ergonomic, 320.0, 12, material textil, 18.0
 PRODUS_ALIMENTAR: Paine, 2.5, 50, 2025-05-02
-
+```
 Data expirarii in format YYYY-MM-DD. Programul compara cu data curenta a sistemului.
 
 Scenariu de utilizare (fragment din main.cpp)

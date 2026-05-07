@@ -26,7 +26,7 @@ Datele de intrare (utilizator si catalog) sunt citite dintr-un fisier text.
 
 ### Ierarhia de clase
 ```text
-Produs (clasa abstracta)
+Produs 
 ├── ProdusAlimentar
 ├── ProdusElectronic
 └── ProdusMobilier
